@@ -1,4 +1,8 @@
-= (ZIPFile) =>
+let 
+    fn_ReadZipArchive = (
+        ZipFile as binary
+    ) as table =>
+
 let
     Header = BinaryFormat.Record([
         MiscHeader = BinaryFormat.Binary(14),
@@ -30,8 +34,17 @@ let
     ZipFormat = BinaryFormat.List(HeaderChoice, each _[IsValid] = true),
  
     Entries = List.Transform(
-        List.RemoveLastN( ZipFormat(ZIPFile), 1),
+        List.RemoveLastN( ZipFormat(ZipFile), 1),
         (e) => [FileName = e[Filename], Content = e[Content] ]
     )
 in
-    Table.FromRecords(Entries)
+    Table.FromRecords(Entries),
+
+    documentation = [
+        Documentation.Name =  "fn_ReadZipArchive",
+        Documentation.Description = "Takes the zip file list of a file table and returns the content as a table object in Power Query.",
+        Documentation.LongDescription = "Takes the zip file list of an archive and returns the content as a table object in Power Query. ",
+        Documentation.Category = "Table",
+        Documentation.Source = "https://github.com/Auguronomics/PowerBi-code/blob/master/PowerQuery/ExtractZIP.pq"
+    ]
+in Value.ReplaceType(fn_ReadZipArchive,Value.ReplaceMetadata(Value.Type(fn_ReadZipArchive), documentation) )
